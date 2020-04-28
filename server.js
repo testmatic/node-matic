@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 
 // API ENDPOINTS
 
+router.get('/', res.status(200).send("API"));
 router.get('/grants', grantController.listAllGrants)
 router.post('/grants', grantController.createNewGrant);
 router.get('/grants/:grantid', grantController.readGrant)
