@@ -61,40 +61,55 @@ exports.uploadUpdatedDataGrant =
     next();
   },
   (req, res, next) => {
-    csv
-      .parseFile(req.file.path)
-      .on("data", (data) => {
-        return new Promise(async (resolve, reject) => {
-          //save in db
-          let obj = {
-            OPPORTUNITY_NUMBER: data[0],
-            OPPORTUNITY_TITLE: data[1],
-            AGENCY_CODE: data[2],
-            AGENCY_NAME: data[3],
-            ESTIMATED_FUNDING: data[4],
-            EXPECTED_NUMBER_OF_AWARDS: data[5],
-            GRANTOR_CONTACT: data[6],
-            AGENCY_CONTACT_PHONE: data[7],
-            AGENCY_CONTACT_EMAIL: data[8],
-            ESTIMATED_POST_DATE: data[9],
-            ESTIMATED_APPLICATION_DUE_DATE: data[10],
-            POSTED_DATE: data[11],
-            CLOSE_DATE: data[12],
-            LAST_UPDATED_DATE_TIME: data[13],
-            VERSION: data[14],
-          };
-          let newGrant = new Grant(obj);
-          await newGrant.save((err, grant) => {
-            if (err) {
-              reject(err)
-            }
-            resolve("ok")
-          });
-        });
+    Grant.collection
+      .drop()
+      .then((ok) => {
+        if (ok) {
+          cvsDecode(req, res);
+        } else {
+          console.log("no drop");
+        }
       })
-      .on("end", () => {
-        return res
-          .status(200)
-          .json({ message: "Grant CSV successfully upload" });
+      .catch((err) => {
+        console.log("err: " + err);
+        cvsDecode(req, res);
       });
   });
+
+  
+function cvsDecode(req, res) {
+  csv
+    .parseFile(req.file.path)
+    .on("data", (data) => {
+      return new Promise(async (resolve, reject) => {
+        //save in db
+        let obj = {
+          OPPORTUNITY_NUMBER: data[0],
+          OPPORTUNITY_TITLE: data[1],
+          AGENCY_CODE: data[2],
+          AGENCY_NAME: data[3],
+          ESTIMATED_FUNDING: data[4],
+          EXPECTED_NUMBER_OF_AWARDS: data[5],
+          GRANTOR_CONTACT: data[6],
+          AGENCY_CONTACT_PHONE: data[7],
+          AGENCY_CONTACT_EMAIL: data[8],
+          ESTIMATED_POST_DATE: data[9],
+          ESTIMATED_APPLICATION_DUE_DATE: data[10],
+          POSTED_DATE: data[11],
+          CLOSE_DATE: data[12],
+          LAST_UPDATED_DATE_TIME: data[13],
+          VERSION: data[14],
+        };
+        let newGrant = new Grant(obj);
+        await newGrant.save((err, grant) => {
+          if (err) {
+            reject(err);
+          }
+          resolve("ok");
+        });
+      });
+    })
+    .on("end", () => {
+      return res.status(200).json({ message: "Grant CSV successfully upload" });
+    });
+}
