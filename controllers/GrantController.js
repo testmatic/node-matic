@@ -144,6 +144,14 @@ function cvsDecode(req, res) {
       });
     })
     .on("end", () => {
+      Grant.deleteMany({ OPPORTUNITY_TITLE: {$eq: 'OPPORTUNITY TITLE'} }, (err, grant) => {
+        if (err) {
+          //return res.status(404).send(err);
+          console.log("err")
+        }
+        //return res.status(200).json({ message: "Grant successfully deleted" });
+        console.log("ok")
+      });
       return res.status(200).json({ message: "Grant CSV successfully upload" });
     })
     .on("error", (err) => {
