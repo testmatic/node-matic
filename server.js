@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const grantController = require("./controllers/GrantController");
 const multer = require("multer");
 const upload = multer({ dest: "tmp/" });
-const API_PORT = 8080;
+const API_PORT = process.env.PORT || 8080;
 const app = express();
 
 // db instance connection
@@ -28,6 +28,6 @@ router.delete('/grants/:grantid', grantController.deleteGrant);
 router.post('/uploadGrants', upload.single("file"), grantController.uploadUpdatedDataGrant);
 
 // append /api for our http requests
-//app.use('/api', router);
+app.use('/api', router);
 
 app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
