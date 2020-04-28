@@ -28,6 +28,6 @@ router.delete('/grants/:grantid', grantController.deleteGrant);
 router.post('/uploadGrants', upload.single("file"), grantController.uploadUpdatedDataGrant);
 
 // append /api for our http requests
-app.use('/api', router);
+//app.use('/api', router);
 
 app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
