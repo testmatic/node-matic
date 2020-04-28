@@ -26,6 +26,7 @@ router.get('/grants/:grantid', grantController.readGrant)
 router.put('/grants/:grantid', grantController.updateGrant)
 router.delete('/grants/:grantid', grantController.deleteGrant);
 router.post('/uploadGrants', upload.single("file"), grantController.uploadUpdatedDataGrant);
+router.get('/grantsPagination', grantController.listGrantsPagination);
 
 // append /api for our http requests
 app.use('/api', router);

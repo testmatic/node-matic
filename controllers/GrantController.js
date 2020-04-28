@@ -1,5 +1,6 @@
 const Grant = require("../models/Grant");
 const csv = require("fast-csv");
+var firstReg = true;
 
 exports.listAllGrants = (req, res) => {
   Grant.find((err, grant) => {
@@ -7,6 +8,40 @@ exports.listAllGrants = (req, res) => {
       return res.status(500).send(err);
     }
     return res.status(200).json(grant);
+  });
+};
+
+exports.listGrantsPagination = (req, res) => {
+  var pageNo = parseInt(req.query.pageNo);
+  var size = parseInt(req.query.size);
+  var query = {};
+  if (pageNo < 0 || pageNo === 0) {
+    response = {
+      error: true,
+      message: "invalid page number, should start with 1",
+    };
+    return res.json(response);
+  }
+  query.skip = size * (pageNo - 1);
+  query.limit = size;
+  /*query.sort = {
+    POSTED_DATE: -1, //Orden de creación descendente
+  };*/
+  // Find some documents
+  Grant.countDocuments({}, function (err, totalCount) {
+    if (err) {
+      response = { error: true, message: "Error fetching data" };
+    }
+    Grant.find({}, {}, query, function (err, data) {
+      // Mongo command to fetch all data from collection.
+      if (err) {
+        response = { error: true, message: "Error fetching data" };
+      } else {
+        var totalPages = Math.ceil(totalCount / size);
+        response = { error: false, message: data, pages: totalPages };
+      }
+      res.json(response);
+    });
   });
 };
 
@@ -76,7 +111,6 @@ exports.uploadUpdatedDataGrant =
       });
   });
 
-  
 function cvsDecode(req, res) {
   csv
     .parseFile(req.file.path)
@@ -112,7 +146,7 @@ function cvsDecode(req, res) {
     .on("end", () => {
       return res.status(200).json({ message: "Grant CSV successfully upload" });
     })
-    .on("error",(err)=>{
-      return res.status(500).json({message: err})
-    })
+    .on("error", (err) => {
+      return res.status(500).json({ message: err });
+    });
 }

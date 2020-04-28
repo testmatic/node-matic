@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const dbRoute = process.env.MONGODB_URL;
-//const dbRoute = "mongodb+srv://fabianzul:Cafazual-30@cluster0-epbcl.mongodb.net/mongo-matic?retryWrites=true&w=majority";
+//const dbRoute = process.env.MONGODB_URL;
+const dbRoute = "mongodb+srv://fabianzul:Cafazual-30@cluster0-epbcl.mongodb.net/mongo-matic?retryWrites=true&w=majority";
 
 const options = {
   useNewUrlParser: true,
