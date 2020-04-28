@@ -111,5 +111,8 @@ function cvsDecode(req, res) {
     })
     .on("end", () => {
       return res.status(200).json({ message: "Grant CSV successfully upload" });
-    });
+    })
+    .on("error",(err)=>{
+      return res.status(500).json({message: err})
+    })
 }
